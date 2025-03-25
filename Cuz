@@ -1,0 +1,126 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Masuk ke BSI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .form-container {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .login-button {
+            background: linear-gradient(to bottom, #f5af19, #f5af19);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+        }
+        .login-button:hover {
+            background: linear-gradient(to bottom, #e07b00, #e07b00);
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-xs form-container">
+        <div class="flex items-center justify-center mb-4">
+            <div class="container flex items-center gap-2 justify-center">
+                <span class="text text-2xl font-normal text-teal-600">Masuk ke BSI</span>
+                <div class="menu-icon w-10 h-10 bg-teal-600 rounded-full flex flex-col items-center justify-center cursor-pointer">
+                    <div class="bar w-5 h-0.5 bg-white my-0.5"></div>
+                    <div class="bar w-5 h-0.5 bg-white my-0.5"></div>
+                    <div class="bar w-5 h-0.5 bg-white my-0.5"></div>
+                </div>
+            </div>
+        </div>
+        <form>
+            <div class="mb-3">
+                <label class="block text-gray-600 mb-1 text-sm">ID Perusahaan</label>
+                <input class="w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm" placeholder="Masukkan ID Perusahaan" type="text"/>
+            </div>
+            <div class="mb-3">
+                <label class="block text-gray-600 mb-1 text-sm">ID Pengguna</label>
+                <input class="w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm" placeholder="Masukkan ID Pengguna" type="text"/>
+            </div>
+            <div class="mb-3 relative">
+                <label class="block text-gray-600 mb-1 text-sm">Kata sandi</label>
+                <input class="w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm" placeholder="Masukkan Kata Sandi" type="password"/>
+                <i class="fas fa-eye absolute right-3 top-10 text-gray-500 cursor-pointer"></i>
+            </div>
+            <div class="mb-3">
+                <canvas height="60" id="captchaCanvas" width="200"></canvas>
+                <a class="text-teal-600 cursor-pointer text-sm" onclick="generateCaptcha()">Segarkan Captcha</a>
+                <br/>
+                <input class="w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm" id="captchaInput" type="text"/>
+                <p class="mt-2 text-sm" id="captchaMessage"></p>
+            </div>
+            <button class="login-button">LOGIN</button>
+        </form>
+        <div class="flex justify-between items-center mt-4">
+            <a class="text-teal-600 text-sm" href="#">Lupa Kata Sandi?</a>
+            <a class="text-teal-600 text-sm" href="#">Buka Kunci Akun</a>
+        </div>
+    </div>
+    <script>
+        let captchaCode = "";
+        function generateCaptcha() {
+            const canvas = document.getElementById("captchaCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 50; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < 100; i++) {
+                ctx.fillStyle = "#000";
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+            }
+            captchaCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+            ctx.font = "bold italic 30px Arial";
+            ctx.fillStyle = "#000";
+            for (let i = 0; i < captchaCode.length; i++) {
+                let x = 20 + i * 40;
+                let y = 40 + Math.random() * 10;
+                let angle = Math.random() * 0.3 - 0.15;
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                ctx.fillText(captchaCode[i], 0, 0);
+                ctx.restore();
+            }
+        }
+        function validateCaptcha() {
+            const input = document.getElementById("captchaInput").value.toUpperCase();
+            const message = document.getElementById("captchaMessage");
+            if (input === captchaCode) {
+                message.style.color = "green";
+                message.textContent = "Captcha benar!";
+            } else {
+                message.style.color = "red";
+                message.textContent = "Captcha salah, coba lagi!";
+            }
+        }
+        generateCaptcha();
+    </script>
+</body>
+</html>
